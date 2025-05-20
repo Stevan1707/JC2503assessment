@@ -1,0 +1,27 @@
+.header_blue{
+    color: blue;
+}
+
+.green{
+    color: green;
+}
+
+body{
+    background-color: rgb(249, 233, 195);
+}
+
+.guideblock{
+    background-color: burlywood;
+    height: 30 px;
+    width: 30 px;
+    margin: 10 px;
+}
+
+.guide_selected{
+    color: cyan;
+    font-weight:bold;
+}
+
+.test{
+    color: green;
+}
