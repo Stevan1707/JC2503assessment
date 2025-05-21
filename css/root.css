@@ -17,26 +17,53 @@
     justify-content: flex-start;
 }
 
+.navigator_box{
+    top: 60%;
+    padding: 10px;
+    position: fixed;
+    border: 2px solid rgb(187, 190, 4);
+    line-height: 30px;
+}
 .myself_picture{
     display: block;
     margin: 10px auto;
 }
+
+
+
+.sidebar_introduction {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: rgb(26, 35, 126); 
+  font-size: 21px;
+  text-align: center;
+  font-weight:700 ;
+}
+
+.techstack {
+  font-family: 'Inter', system-ui, sans-serif;
+  color:rgb(62, 39, 35); 
+  font-size: 24px;
+  font-weight: 500;
+}
+
+
 .navigator_sign{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bolder;
-    font-size: 30px;
+    font-size: 40px;
+    text-align: center;
 }
 
 .selected{
     font-family: Arial, Helvetica, sans-serif;
     font-weight: 700;
-    font-size: 24px;
+    font-size: 30px;
 }
 
 .unselected{
     font-family: Arial, Helvetica, sans-serif;
     font-weight :400;
-    font-size: 15px;
+    font-size: 30px;
 }
 
 .main {
@@ -45,3 +72,17 @@
     padding: 20px;
     box-sizing: border-box; 
 }
+
+.presentinglist {
+    display: block;
+    background-color: rgb(245, 238, 113);
+    line-height: 30px;
+    border: 2px solid rgb(187, 190, 4);
+}
+
+.title{
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    color: #2d3436;
+}
+
