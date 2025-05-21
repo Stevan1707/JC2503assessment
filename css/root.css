@@ -6,7 +6,7 @@
 }
 
 .navigator_bar {
-    width: 200px;
+    width: 20%;
     background-color: rgb(245, 200, 76);
     padding: 20px;
     position: fixed;
@@ -40,8 +40,7 @@
 }
 
 .main {
-    margin-left: 240px; 
-    width: calc(100% - 240px);
+    margin-left: 25%; 
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box; 
