@@ -86,3 +86,9 @@
     color: #2d3436;
 }
 
+.evaluation{
+  font-family: Verdana, sans-serif;
+  font-size: 24px;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
