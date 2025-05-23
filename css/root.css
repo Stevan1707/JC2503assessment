@@ -103,6 +103,7 @@ li{
     background-color: rgb(245, 238, 113);
     line-height: 30px;
     border: 2px solid rgb(187, 190, 4);
+    margin: 20px;
 }
 
 .about_page_content{
@@ -111,7 +112,7 @@ li{
 }
 
 .about_page_img {
-  max-width: 240px;
-  height: auto;
+  height: 200px;      
   padding: 20px;
+  aspect-ratio: 1/1; 
 }
