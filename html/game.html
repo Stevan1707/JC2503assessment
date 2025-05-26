@@ -21,9 +21,9 @@
             <div class="navigator_box">
                 <h2 class="navigator_sign">Navigator</h2>
             <ul>
-                <li class="selected">Index page</li>
+                <li class="unselected"><a href="index.html">Index page</a></li>
                 <li class="unselected"><a href="about.html">About page</a></li>
-                <li class="unselected"><a href="game.html">Quiz game page</a></li>
+                <li class="selected">Quiz game page</li>
             </ul>
             </div>
         </div>
@@ -40,9 +40,22 @@
                         <li>After both of you answer totally five questions, the people with higher score is the winner.</li>
                     </ul>
                 </div>
+            </div>
+
+            <div class="presenting"> 
+                <h1>Please enter your name to start the game.</h1>
+                <div><table>
+                    <td class="evaluation">Username:</td>
+                    <td><input type="text" id="username" name="username"><br></td>
+                </table>
+                <button id="sign_in">I am a buttom</button>
+                <div id="test"></div>
+                </div>
                 
             </div>
          </div>
     </div>
+
+    <script src="../javascript/game.js"></script>
 </body>
 </html>
