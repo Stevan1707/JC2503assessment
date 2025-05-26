@@ -8,7 +8,6 @@
 .navigator_bar {
     width: 20%;
     background-color: rgb(245, 200, 76);
-    padding: 10px;
     position: fixed;
     height: 100%;
     display: block;
@@ -76,6 +75,8 @@
     background-color: rgb(245, 238, 113);
     line-height: 30px;
     border: 2px solid rgb(187, 190, 4);
+    margin: 20px;
+    padding: 20px;
 }
 
 li{
@@ -104,6 +105,16 @@ li{
     line-height: 30px;
     border: 2px solid rgb(187, 190, 4);
     margin: 20px;
+    padding: 20px;
+}
+
+.presenting_with_block{
+    display:block;
+    background-color: rgb(245, 238, 113);
+    line-height: 30px;
+    border: 2px solid rgb(187, 190, 4);
+    margin: 20px;
+    padding: 20px;
 }
 
 .about_page_content{
@@ -120,3 +131,4 @@ li{
 #test{
     margin:7px;
 }
+
