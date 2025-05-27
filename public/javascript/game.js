@@ -1,7 +1,7 @@
 
 
 //1:USA  2:UK  3:French  4:Russia  5:Poland
-playerlist=[];
+
 
 
 document.addEventListener('click', function(e) {
@@ -19,7 +19,6 @@ document.addEventListener('click', function(e) {
 
 function submit(){
     const player = document.getElementById('username').value;
-    playerlist.push(player);
     const sign_in_div = document.getElementById('sign_in_div')
     const select_player = document.createElement("div");
     select_player.id = "select_player_id";      
