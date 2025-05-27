@@ -138,3 +138,9 @@ li{
     margin: 20px 0 0 0; 
     color: red;
 }
+
+.national_flag{
+    height: 200px;
+    padding: 20px;
+    aspect-ratio: 3/2;
+}
