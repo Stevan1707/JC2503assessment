@@ -11,6 +11,8 @@ const io = new Server(server, {
   }
 });
 
+app.use(express.static('public'));
+
 // 调试中间件：记录所有连接
 io.use((socket, next) => {
   console.log(`[SERVER] New connection: ${socket.id}`);

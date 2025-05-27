@@ -28,13 +28,13 @@ function handleSubmit() {
   currentPlayer = username;
   socket.emit('join', username);
 
-  // 构建主界面
-  const container = document.querySelector('.container');
-  if (!container) {
-    console.error('Container element not found');
+  // 构建主界面，只修改 sign_in_div
+  const signInDiv = document.getElementById('sign_in_div');
+  if (!signInDiv) {
+    console.error('sign_in_div element not found');
     return;
   }
-  container.innerHTML = `
+  signInDiv.innerHTML = `
     <div class="main-panel">
       <h2>Welcome <span class="username">${username}</span></h2>
       <div class="online-list">
@@ -99,6 +99,13 @@ function setupEventListeners() {
     console.log(`[CLIENT] Game started in room: ${room_id}`);
     // 这里可以添加游戏界面的代码
   });
+
+  // 错误处理
+  socket.on('error', ({ message }) => {
+    alert(`Error: ${message}`);
+    // 恢复登录界面
+    handleLogout();
+  });
 }
 
 function handleLogout() {
@@ -109,37 +116,23 @@ function handleLogout() {
   
   currentPlayer = null;
 
-  // 恢复登录界面
-  const container = document.querySelector('.container');
-  if (!container) {
-    console.error('Container element not found');
+  // 恢复登录界面，只修改 sign_in_div
+  const signInDiv = document.getElementById('sign_in_div');
+  if (!signInDiv) {
+    console.error('sign_in_div element not found');
     return;
   }
-  container.innerHTML = `
-    <div class="main">
-      <div class="presenting">
-        <h1>Game rules</h1>
-        <ul>
-          <li>This game is a very simple game, so, do not be so nervous</li>
-          <li>Firstly, you have to sign in. After you sign in, you have to find an online opponent.</li>
-          <li>You and your opponent will answer the question at the same time.</li>
-          <li>If you correctly answer the question, you will get two points. However, if you can't, your opponent will get one point.</li>
-          <li>After both of you answer a total of five questions, the person with the higher score is the winner.</li>
-        </ul>
-      </div>
-      <div class="presenting_with_block" id="sign_in_div"> 
-        <h1>Please enter your name to start the game.</h1>
-        <div>
-          <table>
-            <tr>
-              <td class="evaluation">Username:</td>
-              <td><input type="text" id="username" autofocus></td>
-              <td id="invalidation_input" style="color: red;"></td>
-            </tr>
-          </table>
-          <button id="sign_in" class="btn-primary">Submit</button>
-        </div>
-      </div>
+  signInDiv.innerHTML = `
+    <h1>Please enter your name to start the game.</h1>
+    <div>
+      <table>
+        <tr>
+          <td class="evaluation">Username:</td>
+          <td><input type="text" id="username" autofocus></td>
+          <td id="invalidation_input" style="color: red;"></td>
+        </tr>
+      </table>
+      <button id="sign_in" class="btn-primary">Submit</button>
     </div>
   `;
 
