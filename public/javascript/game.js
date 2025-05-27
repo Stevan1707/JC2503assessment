@@ -1,99 +1,148 @@
 const socket = io();
+let currentPlayer = null;
 
-//1:USA  2:UK  3:French  4:Russia  5:Poland
+// 初始化绑定
+document.getElementById('sign_in').addEventListener('click', handleSubmit);
 
+function handleSubmit() {
+  const input = document.getElementById('username');
+  const invalidationMessage = document.getElementById('invalidation_input');
+  if (!input || !invalidationMessage) {
+    console.error('Input or invalidation_input element not found');
+    return;
+  }
 
+  const username = input.value.trim();
+  if (!username) {
+    invalidationMessage.innerHTML = 'Please enter a valid username.';
+    return;
+  }
+  invalidationMessage.innerHTML = ''; // Clear error message
 
-document.addEventListener('click', function(e) {
-    // 处理提交按钮
-    if (e.target && e.target.id === 'sign_in') {
-        submit();
-    }
-    // 处理注销按钮
-    if (e.target && e.target.id === 'log_out') {
-        log_out();
-    }
-});
+  // 清理旧状态
+  if (currentPlayer) {
+    socket.off('update_users');
+    socket.off('challenge_request');
+  }
 
-function submit() {
-    const player = document.getElementById('username').value;
-    const sign_in_div = document.getElementById('sign_in_div');
+  currentPlayer = username;
+  socket.emit('join', username);
 
-    // 发送加入事件到服务器
-    socket.emit('join', player);
+  // 构建主界面
+  const container = document.querySelector('.container');
+  if (!container) {
+    console.error('Container element not found');
+    return;
+  }
+  container.innerHTML = `
+    <div class="main-panel">
+      <h2>Welcome <span class="username">${username}</span></h2>
+      <div class="online-list">
+        <h3>Online Players:</h3>
+        <ul id="player_list"></ul>
+      </div>
+      <button id="log_out" class="btn-danger">Logout</button>
+    </div>
+  `;
 
-    // 创建主容器
-    const select_player = document.createElement("div");
-    select_player.id = "select_player_id";
-    select_player.className = "presenting";
-    select_player.innerHTML = `
-        <div class="presenting_with_block">
-            <h2>Welcome, <span class="username">${player}</span></h2>
-            <h2> You can choose a online player to challenge...
-            <h2>Or, you can wait for a challenge...</h2>
-            
-            <div id="online-players">
-                <h3>Online Players:</h3>
-                <ul class="player-list"></ul> 
-            </div>
-
-        </div>
-        <button id="log_out">log out</button>
-    `;
-    // 替换原有登录界面
-    sign_in_div.replaceWith(select_player);
-
-    // 监听服务器发来的在线玩家列表更新
-    socket.on('update-users', (users) => {
-        const list = select_player.querySelector('.player-list'); // 直接操作动态生成的元素
-        list.innerHTML = users
-            .filter(u => u !== player) // 过滤自己
-            .map(u => `
-                <li>
-                    ${u}
-                    <button class="challenge-btn" data-user="${u}">Challenge</button>
-                </li>
-            `).join('');
-    });
-
-    socket.on('challenge-request', ({ from }) => {
-        const accept = confirm(`${from} is challenging you! Accept?`);
-        if (accept) {
-            socket.emit('challenge-accept', { from, to: player }); // 通知服务器挑战接受
-        } else {
-            socket.emit('challenge-reject', { from, to: player });
-        }
-    });
-
-    // 挑战按钮事件委托（绑定到动态生成的父容器）
-    select_player.addEventListener('click', (e) => {
-        if (e.target.classList.contains('challenge-btn')) {
-            const targetUser = e.target.dataset.user;
-            socket.emit('challenge', { from: player, to: targetUser });
-        }
-    });
+  // 绑定新事件
+  document.getElementById('log_out').addEventListener('click', handleLogout);
+  setupEventListeners();
 }
 
-// `
+function setupEventListeners() {
+  // 玩家列表更新
+  socket.on('update_users', users => {
+    console.log('[CLIENT] Received users:', users);
+    const list = document.getElementById('player_list');
+    if (!list) return;
 
-function log_out(){
-    socket.emit('disconnect-manually');
-    const select_player = document.getElementById('select_player_id')
-    const sign_in = document.createElement("div");
-    sign_in.id = "sign_in_div";
-    sign_in.className = "presenting_with_block"
-    sign_in.innerHTML = 
-    `<div><table>
+    list.innerHTML = users
+      .filter(u => u !== currentPlayer)
+      .map(u => `
+        <li class="player-item">
+          <span>${u}</span>
+          <button 
+            class="btn-challenge" 
+            data-user="${u}"
+            aria-label="Challenge ${u}"
+          >
+            Challenge
+          </button>
+        </li>
+      `).join('');
+
+    // 动态绑定挑战按钮
+    document.querySelectorAll('.btn-challenge').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.user;
+        socket.emit('challenge', {
+          from: currentPlayer,
+          to: target
+        });
+      });
+    });
+  });
+
+  // 挑战请求处理
+  socket.on('challenge_request', ({ from }) => {
+    if (confirm(`${from} 向你发起挑战！接受吗？`)) {
+      socket.emit('challenge_accept', {
+        from: from,
+        to: currentPlayer
+      });
+    }
+  });
+
+  // 游戏开始处理
+  socket.on('game_start', ({ room_id }) => {
+    console.log(`[CLIENT] Game started in room: ${room_id}`);
+    // 这里可以添加游戏界面的代码
+  });
+}
+
+function handleLogout() {
+  // 清理操作
+  socket.emit('disconnect_manually');
+  socket.off('update_users');
+  socket.off('challenge_request');
+  
+  currentPlayer = null;
+
+  // 恢复登录界面
+  const container = document.querySelector('.container');
+  if (!container) {
+    console.error('Container element not found');
+    return;
+  }
+  container.innerHTML = `
+    <div class="main">
+      <div class="presenting">
+        <h1>Game rules</h1>
+        <ul>
+          <li>This game is a very simple game, so, do not be so nervous</li>
+          <li>Firstly, you have to sign in. After you sign in, you have to find an online opponent.</li>
+          <li>You and your opponent will answer the question at the same time.</li>
+          <li>If you correctly answer the question, you will get two points. However, if you can't, your opponent will get one point.</li>
+          <li>After both of you answer a total of five questions, the person with the higher score is the winner.</li>
+        </ul>
+      </div>
+      <div class="presenting_with_block" id="sign_in_div"> 
+        <h1>Please enter your name to start the game.</h1>
+        <div>
+          <table>
             <tr>
-                <td class="evaluation">Username:</td>
-                <td><input type="text" id="username" name="username"><br></td>
+              <td class="evaluation">Username:</td>
+              <td><input type="text" id="username" autofocus></td>
+              <td id="invalidation_input" style="color: red;"></td>
             </tr>
-        </table>
-        <button id="sign_in">submit</button>
-                
+          </table>
+          <button id="sign_in" class="btn-primary">Submit</button>
+        </div>
+      </div>
     </div>
-    `
-    ;
-    select_player.replaceWith(sign_in);
-    document.getElementById('sign_in').addEventListener('click', submit);
+  `;
+
+  // 重新绑定
+  document.getElementById('sign_in').addEventListener('click', handleSubmit);
 }
