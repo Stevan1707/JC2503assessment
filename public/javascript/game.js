@@ -11,7 +11,6 @@ function handleSubmit() {
   const input = document.getElementById('username');
   const invalidation_input = document.getElementById('invalidation_input');
   if (!input || !invalidation_input) {
-    console.error('Input or invalidation_input element not found');
     return;
   }
 
@@ -37,7 +36,6 @@ function handleSubmit() {
 
   const sign_in_div = document.getElementById('sign_in_div');
   if (!sign_in_div) {
-    console.error('sign_in_div element not found');
     return;
   }
   sign_in_div.innerHTML = `
@@ -57,7 +55,6 @@ function handleSubmit() {
 
 function setupEventListeners() {
   socket.on('update_users', ({ users, in_game }) => {
-    console.log('[CLIENT] Received users:', users, 'In game:', in_game);
     const list = document.getElementById('player_list');
     if (!list) return;
 
@@ -124,7 +121,6 @@ function setupEventListeners() {
             <button class="answer_button" data-option="${index}">${option}</button>
           `).join('')}
         </div>
-        <p id="feedback" class="feedback"></p>
         <div class="scoreboard">
           <p>Your Score: <span id="player_score">${player_score}</span></p>
           <p>Opponent's Score: <span id="opponent_score">${opponent_score}</span></p>
@@ -141,23 +137,13 @@ function setupEventListeners() {
     });
   });
 
-  socket.on('answer_result', ({ player, player_score, opponent_score, is_correct, answered }) => {
-    const feedback_element = document.getElementById('feedback');
+  socket.on('answer_result', ({ player, player_score, opponent_score }) => {
     const player_score_element = document.getElementById('player_score');
     const opponent_score_element = document.getElementById('opponent_score');
 
-    if (feedback_element && player_score_element && opponent_score_element) {
-      feedback_element.textContent = answered === current_player 
-        ? (is_correct ? 'Your answer is correct!' : 'Your answer is incorrect.')
-        : "You didn't answer in time.";
+    if (player_score_element && opponent_score_element) {
       player_score_element.textContent = current_player === player ? player_score : opponent_score;
       opponent_score_element.textContent = current_player === player ? opponent_score : player_score;
-    } else {
-      console.error('Feedback or scoreboard elements not found:', {
-        feedback: !!feedback_element,
-        player_score: !!player_score_element,
-        opponent_score: !!opponent_score_element
-      });
     }
   });
 
@@ -194,7 +180,6 @@ function setupEventListeners() {
 function showChallengeScreen() {
   const sign_in_div = document.getElementById('sign_in_div');
   if (!sign_in_div) {
-    console.error('sign_in_div element not found');
     return;
   }
   sign_in_div.innerHTML = `
@@ -222,7 +207,6 @@ function showQuizScreen(opponent) {
         <p>Your Score: <span id="player_score">0</span></p>
         <p>${opponent}'s Score: <span id="opponent_score">0</span></p>
       </div>
-      <p id="feedback" class="feedback"></p>
     </div>
   `;
 }
@@ -242,7 +226,6 @@ function handleLogout() {
 
   const sign_in_div = document.getElementById('sign_in_div');
   if (!sign_in_div) {
-    console.error('sign_in_div element not found');
     return;
   }
   sign_in_div.innerHTML = `

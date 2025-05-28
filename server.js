@@ -15,7 +15,6 @@ const io = new Server(server, {
 app.use(express.static("public"));
 
 io.use((socket, next) => {
-  console.log(`[SERVER] New connection: ${socket.id}`);
   next();
 });
 
@@ -41,7 +40,6 @@ function shuffle(array) {
 io.on('connection', (socket) => {
   socket.on('join', (username) => {
     if (!username) {
-      console.error(`[JOIN] Invalid username for socket ${socket.id}`);
       socket.emit('error', { message: 'Invalid username' });
       return;
     }
@@ -49,7 +47,6 @@ io.on('connection', (socket) => {
       socket.emit('error', { message: 'Username already taken' });
       return;
     }
-    console.log(`[JOIN] ${socket.id} -> ${username}`);
     online_users[socket.id] = username;
     broadcastUsers();
   });
@@ -59,17 +56,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log(`[DISCONNECT] ${socket.id}`);
     cleanupUser(socket.id);
   });
 
   socket.on('disconnect_manually', () => {
-    console.log(`[MANUAL DISCONNECT] ${socket.id}`);
     cleanupUser(socket.id);
   });
 
   socket.on('challenge', ({ from, to }) => {
-    console.log(`[CHALLENGE] ${from} -> ${to}`);
     const target = findUserSocket(to);
     if (target) {
       if (isUserInGame(to)) {
@@ -78,13 +72,11 @@ io.on('connection', (socket) => {
         io.to(target).emit('challenge_request', { from });
       }
     } else {
-      console.error(`[CHALLENGE] Target user ${to} not found`);
       socket.emit('error', { message: `User ${to} is not online` });
     }
   });
 
   socket.on('challenge_reject', ({ from, to }) => {
-    console.log(`[REJECT] ${to} rejected ${from}'s challenge`);
     const from_socket = findUserSocket(from);
     if (from_socket) {
       io.to(from_socket).emit('challenge_reject', { from: to });
@@ -92,7 +84,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('challenge_accept', ({ from, to }) => {
-    console.log(`[ACCEPT] ${to} accepted ${from}'s challenge`);
     const from_socket = findUserSocket(from);
     const to_socket = findUserSocket(to);
     
@@ -111,7 +102,6 @@ io.on('connection', (socket) => {
       sendQuestion(room_id);
       broadcastUsers();
     } else {
-      console.error(`[ACCEPT] One or both users not found: ${from}, ${to}`);
       socket.emit('error', { message: 'Cannot start game: user(s) not found' });
     }
   });
@@ -125,8 +115,6 @@ io.on('connection', (socket) => {
     const question = questions[game.current_question];
     const is_correct = game.current_options[option] === question.correct;
 
-    console.log(`[ANSWER] ${username} selected option ${option} (${game.current_options[option]}), correct: ${question.correct}, is_correct: ${is_correct}`);
-
     if (is_correct) {
       game.scores[username] += 2;
     } else {
@@ -139,16 +127,12 @@ io.on('connection', (socket) => {
     io.to(player_socket).emit('answer_result', {
       player: username,
       player_score: game.scores[username],
-      opponent_score: game.scores[opponent],
-      is_correct,
-      answered: username
+      opponent_score: game.scores[opponent]
     });
     io.to(opponent_socket).emit('answer_result', {
       player: username,
       player_score: game.scores[username],
-      opponent_score: game.scores[opponent],
-      is_correct,
-      answered: username
+      opponent_score: game.scores[opponent]
     });
 
     game.current_question++;
@@ -212,7 +196,6 @@ function cleanupUser(socket_id) {
       }
     }
     broadcastUsers();
-    console.log(`[CLEANUP] Removed ${username}. Remaining users: ${JSON.stringify(online_users)}`);
   }
 }
 
@@ -225,5 +208,5 @@ function isUserInGame(username) {
 }
 
 server.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+    console.log('Server running on http://localhost:3000');
 });
