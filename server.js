@@ -65,7 +65,12 @@ io.on('connection', (socket) => {
     });
 
     socket.on('challenge', ({ from, to }) => {
+        const from_socket = findUserSocket(from);
         const target = findUserSocket(to);
+        if (!from_socket) {
+            socket.emit('error', { message: 'Invalid challenger' });
+            return;
+        }
         if (target) {
             if (isUserInGame(to)) {
                 socket.emit('error', { message: `${to} is already in a game` });

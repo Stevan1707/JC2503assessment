@@ -1,4 +1,3 @@
-//`
 const socket = io();
 let current_player = null;
 let current_room = null;
@@ -50,17 +49,6 @@ function handleSubmit() {
         </div>
     `;
 
-
-    // <div class="main_panel">
-    //         <h2>Welcome <span class="username">${username}</span></h2>
-    //         <div class="online_list">
-    //             <h3>You are online now! If you leave this page, you will be offline</h3>
-    //             <h3>Other online Players:</h3>
-    //             <ul id="player_list"></ul>
-    //         </div>
-    //         <button id="log_out" class="log_out_button">Logout</button>
-    //     </div>
-
     document.getElementById('log_out').addEventListener('click', handleLogout);
     setupEventListeners();
 }
@@ -70,7 +58,6 @@ function setupEventListeners() {
         const list = document.getElementById('player_list');
         if (!list) return;
 
-
         list.innerHTML = users
             .filter(user => user !== current_player)
             .map(user => `
@@ -78,11 +65,11 @@ function setupEventListeners() {
                     <span>${user}</span>
                     ${in_game.includes(user) ? 
                         '<span>Cannot Challenge</span>' : 
-                        `<button  data-user="${user}" aria-label="Challenge ${user}">Challenge</button>`}
+                        `<button data-user="${user}" aria-label="Challenge ${user}">Challenge</button>`}
                 </li>
             `).join('');
 
-        document.querySelectorAll('.challenge_button').forEach(button => {
+        document.querySelectorAll('button[data-user]').forEach(button => {
             button.addEventListener('click', () => {
                 const target = button.dataset.user;
                 socket.emit('challenge', { from: current_player, to: target });
@@ -93,7 +80,7 @@ function setupEventListeners() {
     socket.on('challenge_request', ({ from }) => {
         const sign_in_div = document.getElementById('sign_in_div');
         if (!sign_in_div) return;
-// the challenge page
+        // the challenge page
         sign_in_div.innerHTML = `
             <div>
                 <h2>${from} challenges you!</h2>
@@ -101,7 +88,7 @@ function setupEventListeners() {
                 <button id="reject_challenge" class="danger_button">Reject</button>
             </div>
         `;
-//dealing with challenges
+        //dealing with challenges
         document.getElementById('accept_challenge').addEventListener('click', () => {
             socket.emit('challenge_accept', { from, to: current_player });
         });
@@ -112,12 +99,12 @@ function setupEventListeners() {
     });
 
     socket.on('challenge_reject', ({ from }) => {
-      //alert to the player
+        //alert to the player
         alert(`Challenge to ${from} was rejected.`);
         showChallengeScreen();
     });
 
-// add both player to a room
+    // add both player to a room
     socket.on('game_start', ({ room_id, opponent }) => {
         current_room = room_id;
         showQuizScreen(opponent);
@@ -126,13 +113,12 @@ function setupEventListeners() {
     socket.on('question', ({ question, flag, options, player_score, opponent_score }) => {
         const sign_in_div = document.getElementById('sign_in_div');
         if (!sign_in_div) return;
-//challenging page
+        //challenging page
         sign_in_div.innerHTML = `
             <div>
                 <h2 class="center">${question}</h2>
                 <img src="../img/flags/${flag}.png" alt="Flag" class="national_flag">
                 <div class="options">
-
                     ${options.map((option, index) => `
                         <button class="answer_button" data-option="${index}">${option}</button>
                     `).join('')}
@@ -170,8 +156,7 @@ function setupEventListeners() {
         let result = 'Draw';
         if (player_score > opponent_score) result = 'You win';
         else if (player_score < opponent_score) result = 'You lose';
-//show the result
-
+        //show the result
         sign_in_div.innerHTML = `
             <div class="result_panel">
                 <h2>Game Over</h2>
@@ -247,7 +232,7 @@ function handleLogout() {
         return;
     }
     sign_in_div.innerHTML = `
-        <h1 class="center">Please enter your name to start the game.</h1>
+        <h1 >Please enter your name to start the game.</h1>
         <div>
             <table>
                 <tr>
